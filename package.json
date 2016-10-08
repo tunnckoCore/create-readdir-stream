@@ -18,7 +18,8 @@
     "prerelease": "npm test",
     "release": "standard-version --sign --no-verify",
     "precommit": "git add --all",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "example": "node example.js"
   },
   "dependencies": {
     "extend-shallow": "^2.0.1",
