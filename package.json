@@ -63,6 +63,15 @@
     ],
     "lint": {
       "reflinks": true
-    }
+    },
+    "related": {
+      "list": []
+    },
+    "reflinks": [
+      "micromatch",
+      "through2",
+      "use",
+      "vinyl"
+    ]
   }
 }

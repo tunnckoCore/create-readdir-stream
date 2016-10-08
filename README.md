@@ -17,6 +17,55 @@ npm i create-readdir-stream --save
 const createReaddirStream = require('create-readdir-stream')
 ```
 
+### [createReaddirStream](index.js#L66)
+> Creates a stream from a `dir` contents, without recursion and without globs. Support plugins, using [use][]. It pushes [vinyl][] files to the stream, but files does not have `.contents` and `.stat`. It **not reads** the files, because this is up to the user.
+
+> Below example shows how you can create glob plugin using
+the [micromatch][] globbing library. Only files that
+pass the patterns will be pushed to stream!
+
+**Params**
+
+* `dir` **{String|Buffer}**: directory to read    
+* `opts` **{Object}**: passed directly to [through2][] and [vinyl][]    
+* `returns` **{Stream}**: transform stream with additional `.use` method  
+
+**Example**
+
+```js
+var extend = require('extend-shallow')
+var through2 = require('through2')
+var micromatch = require('micromatch')
+var readdir = require('create-readdir-stream')
+
+var app = readdir('./')
+var patterns = ['*.md', '!index.js', '*.js']
+
+app.use(glob(patterns))
+  .pipe(through2.obj(function (file, enc, cb) {
+    console.log(file.basename)
+    cb()
+  }))
+
+function glob (patterns, options) {
+  return function (stream) {
+    // stream.files === undefined
+
+    return function (stream) {
+      // this.files === stream.files
+      // files are coming from `fs.readdir` directly
+
+      // this function WON'T be called
+      // if there's some errors reading the directory.
+
+      // force `nodupes` option, it is good deal
+      options = extend({}, options, { nodupes: true })
+      this.files = micromatch(this.files, patterns, options)
+    }
+  }
+}
+```
+
 ## Contributing
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/tunnckoCore/create-readdir-stream/issues/new).  
 But before doing anything, please read the [CONTRIBUTING.md](./CONTRIBUTING.md) guidelines.
@@ -24,6 +73,11 @@ But before doing anything, please read the [CONTRIBUTING.md](./CONTRIBUTING.md) 
 ## [Charlike Make Reagent](http://j.mp/1stW47C) [![new message to charlike][new-message-img]][new-message-url] [![freenode #charlike][freenode-img]][freenode-url]
 
 [![tunnckoCore.tk][author-www-img]][author-www-url] [![keybase tunnckoCore][keybase-img]][keybase-url] [![tunnckoCore npm][author-npm-img]][author-npm-url] [![tunnckoCore twitter][author-twitter-img]][author-twitter-url] [![tunnckoCore github][author-github-img]][author-github-url]
+
+[micromatch]: https://github.com/jonschlinkert/micromatch
+[through2]: https://github.com/rvagg/through2
+[use]: https://github.com/jonschlinkert/use
+[vinyl]: https://github.com/gulpjs/vinyl
 
 [npmjs-url]: https://www.npmjs.com/package/create-readdir-stream
 [npmjs-img]: https://img.shields.io/npm/v/create-readdir-stream.svg?label=create-readdir-stream

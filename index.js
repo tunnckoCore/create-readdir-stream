@@ -10,6 +10,59 @@
 var path = require('path')
 var utils = require('./utils')
 
+/**
+ * > Creates a stream from a `dir` contents, without
+ * recursion and without globs. Support plugins, using [use][].
+ * It pushes [vinyl][] files to the stream, but files does
+ * not have `.contents` and `.stat`. It **not reads** the files,
+ * because this is up to the user.
+ *
+ * **Example**
+ *
+ * > Below example shows how you can create glob plugin using
+ * the [micromatch][] globbing library. Only files that
+ * pass the patterns will be pushed to stream!
+ *
+ * ```js
+ * var extend = require('extend-shallow')
+ * var through2 = require('through2')
+ * var micromatch = require('micromatch')
+ * var readdir = require('create-readdir-stream')
+ *
+ * var app = readdir('./')
+ * var patterns = ['*.md', '!index.js', '*.js']
+ *
+ * app.use(glob(patterns))
+ *   .pipe(through2.obj(function (file, enc, cb) {
+ *     console.log(file.basename)
+ *     cb()
+ *   }))
+ *
+ * function glob (patterns, options) {
+ *   return function (stream) {
+ *     // stream.files === undefined
+ *
+ *     return function (stream) {
+ *       // this.files === stream.files
+ *       // files are coming from `fs.readdir` directly
+ *
+ *       // this function WON'T be called
+ *       // if there's some errors reading the directory.
+ *
+ *       // force `nodupes` option, it is good deal
+ *       options = extend({}, options, { nodupes: true })
+ *       this.files = micromatch(this.files, patterns, options)
+ *     }
+ *   }
+ * }
+ * ```
+ *
+ * @param  {String|Buffer} `dir` directory to read
+ * @param  {Object} `opts` passed directly to [through2][] and [vinyl][]
+ * @return {Stream} transform stream with additional `.use` method
+ * @api public
+ */
+
 module.exports = function createReaddirStream (dir, opts) {
   dir = utils.isBuffer(dir) ? dir.toString() : dir
 
