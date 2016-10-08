@@ -43,10 +43,11 @@ module.exports = function createReaddirStream (dir, opts) {
     }
 
     stream.files.forEach(function (fp, idx) {
-      stream.push(new utils.File({
+      var config = utils.extend(opts, {
         cwd: opts.cwd,
         path: path.join(dir, fp)
-      }))
+      })
+      stream.push(new utils.File(config))
 
       if ((idx + 1) === stream.files.length) {
         stream.push(null)
