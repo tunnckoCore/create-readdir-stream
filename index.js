@@ -18,10 +18,12 @@ module.exports = function createReaddirStream (dir, opts) {
     throw new TypeError('create-readdir-stream: ' + msg)
   }
 
-  opts = utils.extend({ cwd: process.cwd() }, opts)
+  opts = utils.extend({ cwd: process.cwd() }, opts, {
+    objectMode: true
+  })
   dir = path.resolve(opts.cwd, dir)
 
-  var stream = utils.use(utils.through2.obj())
+  var stream = utils.use(utils.through2(opts))
   utils.fs.readdir(dir, function (err, files) {
     if (err) {
       stream.emit('error', err)
