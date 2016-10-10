@@ -11,102 +11,159 @@ var path = require('path')
 var utils = require('./utils')
 
 /**
- * > Creates a stream from a `dir` contents, without
- * recursion and without globs. Support plugins, using [use][].
- * It pushes [vinyl][] files to the stream, but files does
- * not have `.contents` and `.stat`. It **not reads** the files,
- * because this is up to the user.
+ * > Initialize `CreateReaddirStream` with default `options`.
  *
  * **Example**
  *
- * > Below example shows how you can create glob plugin using
- * the [micromatch][] globbing library. Only files that
- * pass the patterns will be pushed to stream!
- *
  * ```js
- * var extend = require('extend-shallow')
- * var through2 = require('through2')
- * var micromatch = require('micromatch')
- * var readdir = require('create-readdir-stream')
+ * const inst = require('create-readdir-stream')
  *
- * var app = readdir('./')
- * var patterns = ['*.md', '!index.js', '*.js']
+ * console.log(inst.use) // => 'function'
+ * console.log(inst.pipe) // => 'function'
+ * console.log(inst.createReaddirStream) // => 'function'
  *
- * app.use(glob(patterns))
- *   .pipe(through2.obj(function (file, enc, cb) {
- *     console.log(file.basename)
- *     cb()
- *   }))
- *
- * function glob (patterns, options) {
- *   return function (stream) {
- *     // stream.files === undefined
- *
- *     return function (stream) {
- *       // this.files === stream.files
- *       // files are coming from `fs.readdir` directly
- *
- *       // this function WON'T be called
- *       // if there's some errors reading the directory.
- *
- *       // force `nodupes` option, it is good deal
- *       options = extend({}, options, { nodupes: true })
- *       this.files = micromatch(this.files, patterns, options)
- *     }
- *   }
- * }
+ * // or get constructor
+ * const Readdir = require('create-readdir-stream').CreateReaddirStream
  * ```
  *
- * @param  {String|Buffer} `dir` directory to read
- * @param  {Object} `opts` passed directly to [through2][] and [vinyl][]
- * @return {Stream} transform stream with additional `.use` method
+ * @param {Object} `[options]` one of them is `cwd`.
  * @api public
  */
 
-module.exports = function createReaddirStream (dir, opts) {
+function CreateReaddirStream (options) {
+  if (!(this instanceof CreateReaddirStream)) {
+    return new CreateReaddirStream(options)
+  }
+
+  utils.use(this)
+  this.initDefaults(options)
+}
+
+var proto = CreateReaddirStream.prototype
+
+/**
+ * > Initial defaults and initializing of empty
+ * and forced [through2][] object mode stream.
+ *
+ * @param  {Object} `[options]` optional
+ * @return {CreateReaddirStream} this instance for chaining
+ * @api private
+ */
+
+proto.initDefaults = function initDefaults (options) {
+  this.options = utils.extend({
+    cwd: process.cwd(),
+    file: {
+      include: true,
+      exclude: false,
+      options: {}
+    }
+  }, options, {
+    objectMode: true
+  })
+  this.stream = utils.through2(this.options)
+  return this
+}
+
+/**
+ * > Reads a `dir` contents, creates [vinyl][] file
+ * from each filepath, after that push them to stream.
+ *
+ * @param  {String|Buffer} `<dir>` buffer or string folder/directory to read
+ * @param  {Object} `[options]` options are [extend-shallow][]ed with `this.options`
+ * @return {CreateReaddirStream} this instance for chaining
+ * @api public
+ */
+
+proto.createReaddirStream = function createReaddirStream (dir, options) {
   dir = utils.isBuffer(dir) ? dir.toString() : dir
 
   if (typeof dir !== 'string') {
     var msg = 'expect `dir` to be a string or Buffer'
-    throw new TypeError('create-readdir-stream: ' + msg)
+    throw new TypeError('[create-readdir-stream] .readdir: ' + msg)
   }
 
-  opts = utils.extend({ cwd: process.cwd() }, opts, {
-    objectMode: true
-  })
-  dir = path.resolve(opts.cwd, dir)
+  this.options = utils.extend(this.options, options)
+  this.rootDir = path.resolve(this.options.cwd, dir)
 
-  var stream = utils.use(utils.through2(opts))
-  utils.fs.readdir(dir, function (err, files) {
+  utils.fs.readdir(this.rootDir, function (err, paths) {
     if (err) {
-      stream.emit('error', err)
+      var message = err.message
+      err.message = '[create-readdir-stream] .readdir: '
+      err.message += message
+
+      this.stream.emit('error', err)
+      return
+    }
+    if (!paths.length) {
+      var msg = 'directory is empty: ' + this.rootDir
+      var er = new Error('[create-readdir-stream] .readdir: ' + msg)
+      this.stream.emit('error', er)
       return
     }
 
-    stream.files = files
-    // notice that plugins WON'T
-    // be even called if there's an error!
-    stream.run(stream)
+    this.paths = paths
 
-    if (!stream.files.length) {
-      var msg = 'directory is empty: ' + dir
-      var er = new Error('create-readdir-stream: ' + msg)
-      stream.emit('error', er)
-      return
+    // Should return paths!
+    // Perfect place for globbing library
+    // such as `micromatch`
+    if (typeof this.options.plugin === 'function') {
+      this.paths = this.options.plugin.call(this, this.paths)
     }
 
-    stream.files.forEach(function (fp, idx) {
-      var config = utils.extend(opts, {
-        cwd: opts.cwd,
-        path: path.join(dir, fp)
+    // Change all paths to Vinyl files
+    // and push them to stream.
+    this.paths.forEach(function (fp, idx) {
+      // Allow user to add to
+      // each file what he want
+      var config = utils.extend(this.options.file, {
+        cwd: this.options.cwd,
+        path: path.join(this.rootDir, fp)
       })
-      stream.push(new utils.File(config))
 
-      if ((idx + 1) === stream.files.length) {
-        stream.push(null)
+      // Write to instance intentionally and after
+      // that pass it to each plugin.
+      this.file = new utils.File(config)
+
+      // Each plugin's `this` context is the File
+      // So this allows to modify through using `this`
+      // in the plugin, instead of only `file` argument.
+      // For example `this.path = 'foobar'` or `file.path = 'foobar'`
+      // both would work.
+      this.run(this.file)
+
+      // Allow users to choose which file should be pushed to stream.
+      // For example:
+      // pass `file.exclude = true` or `file.include = false` to some
+      // file and it won't be pushed to the stream.
+      if (this.file.include === true && this.file.exclude === false) {
+        this.stream.push(this.file)
       }
-    })
-  })
 
-  return stream
+      var shouldClose = (idx + 1) === this.paths.length
+      if (shouldClose) {
+        this.stream.push(null)
+      }
+    }, this)
+  }.bind(this))
+
+  return this.stream
 }
+
+/**
+ * Expose `CreateReaddirStream` instance
+ *
+ * @type {Object}
+ * @api private
+ */
+
+module.exports = new CreateReaddirStream()
+
+/**
+ * Expose `CreateReaddirStream` constructor
+ *
+ * @type {Function}
+ * @api private
+ */
+
+module.exports.CreateReaddirStream = CreateReaddirStream
