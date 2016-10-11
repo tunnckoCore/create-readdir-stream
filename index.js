@@ -66,8 +66,73 @@ proto.initDefaults = function initDefaults (options) {
 }
 
 /**
+ * > Smart plugins support using [use][]. It just calls
+ * that `fn` immediately and if it returns function again
+ * it is called (**only when** `.createReaddirStream` is called)
+ * with `file` argument ([vinyl][] file) for
+ * each item in the returned array by `fs.readdir`.
+ *
+ * **Example**
+ *
+ * ```js
+ * const through2 = require('through2')
+ * const readdir = require('create-readdir-stream')
+ *
+ * readdir.use(function (app) {
+ *   // both `this` and `app` are the instance aka `readdir`
+ *   // called immediately
+ *
+ *   // below function IS NOT called immediately it is
+ *   // called only when `.createReaddirStream` is called
+ *   return function (file) {
+ *     // both `this` and `file` are Vinyl virtual file object
+ *     // called on each filepath. Or in other words
+ *     // this function is called on each item in
+ *     // returned array by `fs.readdir`
+ *
+ *     // exclude `index.js` from been pushed to stream
+ *     if (file.basename === 'index.js') {
+ *       file.exclude = true
+ *       // or file.include = false
+ *     }
+ *     console.log('from plugin', file.basename)
+ *   }
+ * })
+ *
+ * readdir
+ *   .createReaddirStream('./')
+ *   .once('error', console.error)
+ *   .pipe(through2.obj(function (file, enc, cb) {
+ *     // you should NOT expect to see `index.js` here :)
+ *     console.log('from pipe', file.basename)
+ *     cb()
+ *   }))
+ * ```
+ *
+ * @name   .use
+ * @param  {Function} `<fn>` plugin to be called immediately
+ * @return {CreateReadStream} this instance for chaining
+ * @api public
+ */
+
+/**
  * > Reads a `dir` contents, creates [vinyl][] file
  * from each filepath, after that push them to stream.
+ *
+ * **Example**
+ *
+ * ```js
+ * const th2 = require('through2')
+ * const fs2 = require('create-readdir-stream')
+ *
+ * // same signature and api as `fs.createReadStream`
+ * fs2.createReaddirStream('./')
+ *   .once('error', console.error)
+ *   .pipe(th2.obj(function (file, enc, cb) {
+ *     console.log('from pipe', file.basename)
+ *     cb()
+ *   }))
+ * ```
  *
  * @name   .createReaddirStream
  * @param  {String|Buffer} `<dir>` buffer or string folder/directory to read

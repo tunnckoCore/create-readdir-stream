@@ -54,6 +54,7 @@ test('should expose constructor `CreateReaddirStream`', function (done) {
   test.strictEqual(typeof app.createReaddirStream, 'function')
   done()
 })
+
 test('should exposed instance have `.use` method for plugins api', function (done) {
   test.strictEqual(typeof readdir.use, 'function')
   done()

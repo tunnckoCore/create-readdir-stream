@@ -14,7 +14,7 @@ npm i create-readdir-stream --save
 > For more use-cases see the [tests](./test.js)
 
 ```js
-const createReaddirStream = require('create-readdir-stream')
+const readdir = require('create-readdir-stream')
 ```
 
 ### [CreateReaddirStream](index.js#L32)
@@ -36,16 +36,74 @@ console.log(inst.createReaddirStream) // => 'function'
 const Readdir = require('create-readdir-stream').CreateReaddirStream
 ```
 
-### [.createReaddirStream](index.js#L79)
+### [.use](index.js#L118)
+> Smart plugins support using [use][]. It just calls that `fn` immediately and if it returns function again it is called (**only when** `.createReaddirStream` is called) with `file` argument ([vinyl][] file) for each item in the returned array by `fs.readdir`.
 
-> Reads a `dir` contents, creates [vinyl][] file
-from each filepath, after that push them to stream.
+**Params**
+
+* `<fn>` **{Function}**: plugin to be called immediately    
+* `returns` **{CreateReadStream}**: this instance for chaining  
+
+**Example**
+
+```js
+const through2 = require('through2')
+const readdir = require('create-readdir-stream')
+
+readdir.use(function (app) {
+  // both `this` and `app` are the instance aka `readdir`
+  // called immediately
+
+  // below function IS NOT called immediately it is
+  // called only when `.createReaddirStream` is called
+  return function (file) {
+    // both `this` and `file` are Vinyl virtual file object
+    // called on each filepath. Or in other words
+    // this function is called on each item in
+    // returned array by `fs.readdir`
+
+    // exclude `index.js` from been pushed to stream
+    if (file.basename === 'index.js') {
+      file.exclude = true
+      // or file.include = false
+    }
+    console.log('from plugin', file.basename)
+  }
+})
+
+readdir
+  .createReaddirStream('./')
+  .once('error', console.error)
+  .pipe(through2.obj(function (file, enc, cb) {
+    // you should NOT expect to see `index.js` here :)
+    console.log('from pipe', file.basename)
+    cb()
+  }))
+```
+
+### [.createReaddirStream](index.js#L144)
+> Reads a `dir` contents, creates [vinyl][] file from each filepath, after that push them to stream.
 
 **Params**
 
 * `<dir>` **{String|Buffer}**: buffer or string folder/directory to read    
 * `[options]` **{Object}**: options are [extend-shallow][]ed with `this.options`    
 * `returns` **{Stream}**: Transform Stream, [through2][]  
+
+**Example**
+
+```js
+const th2 = require('through2')
+const fs2 = require('create-readdir-stream')
+
+// same signature and api as `fs.createReadStream`
+fs2.createReaddirStream('./')
+  .once('error', console.error)
+  .pipe(th2.obj(function (file, enc, cb) {
+    console.log('from pipe', file.basename)
+    cb()
+  }))
+```
 
 ## Contributing
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/tunnckoCore/create-readdir-stream/issues/new).  
