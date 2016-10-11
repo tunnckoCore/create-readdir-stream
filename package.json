@@ -1,7 +1,7 @@
 {
   "name": "create-readdir-stream",
   "version": "0.2.0",
-  "description": "Get contents of the folder in streaming mode with support for plugins. No recursion. No globs - possible through plugin. It is like and follows `fs.createReadStream` signature and semantics",
+  "description": "Streaming `fs.readdir`, extensible with smart plugins. No recursion and no globs by default - [use][] plugins. Does not stat and doesn't read the filepaths - use plugins. It just push [vinyl][] files to stream. Follows signature and semantics of `fs.createReadStream` method.",
   "repository": "tunnckoCore/create-readdir-stream",
   "author": "Charlike Mike Reagent <@tunnckoCore> (http://www.tunnckocore.tk)",
   "precommit.silent": true,
