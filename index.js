@@ -19,7 +19,6 @@ var utils = require('./utils')
  * const inst = require('create-readdir-stream')
  *
  * console.log(inst.use) // => 'function'
- * console.log(inst.pipe) // => 'function'
  * console.log(inst.createReaddirStream) // => 'function'
  *
  * // or get constructor
@@ -45,6 +44,7 @@ var proto = CreateReaddirStream.prototype
  * > Initial defaults and initializing of empty
  * and forced [through2][] object mode stream.
  *
+ * @name   .initDefaults
  * @param  {Object} `[options]` optional
  * @return {CreateReaddirStream} this instance for chaining
  * @api private
@@ -69,9 +69,10 @@ proto.initDefaults = function initDefaults (options) {
  * > Reads a `dir` contents, creates [vinyl][] file
  * from each filepath, after that push them to stream.
  *
+ * @name   .createReaddirStream
  * @param  {String|Buffer} `<dir>` buffer or string folder/directory to read
  * @param  {Object} `[options]` options are [extend-shallow][]ed with `this.options`
- * @return {CreateReaddirStream} this instance for chaining
+ * @return {Stream} Transform Stream, [through2][]
  * @api public
  */
 

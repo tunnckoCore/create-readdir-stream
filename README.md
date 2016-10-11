@@ -17,54 +17,35 @@ npm i create-readdir-stream --save
 const createReaddirStream = require('create-readdir-stream')
 ```
 
-### [createReaddirStream](index.js#L66)
-> Creates a stream from a `dir` contents, without recursion and without globs. Support plugins, using [use][]. It pushes [vinyl][] files to the stream, but files does not have `.contents` and `.stat`. It **not reads** the files, because this is up to the user.
-
-> Below example shows how you can create glob plugin using
-the [micromatch][] globbing library. Only files that
-pass the patterns will be pushed to stream!
+### [CreateReaddirStream](index.js#L32)
+> Initialize `CreateReaddirStream` with default `options`.
 
 **Params**
 
-* `dir` **{String|Buffer}**: directory to read    
-* `opts` **{Object}**: passed directly to [through2][] and [vinyl][]    
-* `returns` **{Stream}**: transform stream with additional `.use` method  
+* `[options]` **{Object}**: one of them is `cwd`.    
 
 **Example**
 
 ```js
-var extend = require('extend-shallow')
-var through2 = require('through2')
-var micromatch = require('micromatch')
-var readdir = require('create-readdir-stream')
+const inst = require('create-readdir-stream')
 
-var app = readdir('./')
-var patterns = ['*.md', '!index.js', '*.js']
+console.log(inst.use) // => 'function'
+console.log(inst.createReaddirStream) // => 'function'
 
-app.use(glob(patterns))
-  .pipe(through2.obj(function (file, enc, cb) {
-    console.log(file.basename)
-    cb()
-  }))
-
-function glob (patterns, options) {
-  return function (stream) {
-    // stream.files === undefined
-
-    return function (stream) {
-      // this.files === stream.files
-      // files are coming from `fs.readdir` directly
-
-      // this function WON'T be called
-      // if there's some errors reading the directory.
-
-      // force `nodupes` option, it is good deal
-      options = extend({}, options, { nodupes: true })
-      this.files = micromatch(this.files, patterns, options)
-    }
-  }
-}
+// or get constructor
+const Readdir = require('create-readdir-stream').CreateReaddirStream
 ```
+
+### [.createReaddirStream](index.js#L79)
+
+> Reads a `dir` contents, creates [vinyl][] file
+from each filepath, after that push them to stream.
+
+**Params**
+
+* `<dir>` **{String|Buffer}**: buffer or string folder/directory to read    
+* `[options]` **{Object}**: options are [extend-shallow][]ed with `this.options`    
+* `returns` **{Stream}**: Transform Stream, [through2][]  
 
 ## Contributing
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/tunnckoCore/create-readdir-stream/issues/new).  
@@ -124,3 +105,4 @@ But before doing anything, please read the [CONTRIBUTING.md](./CONTRIBUTING.md) 
 [new-message-url]: https://github.com/tunnckoCore/ama
 [new-message-img]: https://img.shields.io/badge/ask%20me-anything-green.svg
 
+[extend-shallow]: https://github.com/jonschlinkert/extend-shallow
