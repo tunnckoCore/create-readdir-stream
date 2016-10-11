@@ -1,6 +1,6 @@
 {
   "name": "create-readdir-stream",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Get contents of the folder in streaming mode with support for plugins. No recursion. No globs - possible through plugin. It is like and follows `fs.createReadStream` signature and semantics",
   "repository": "tunnckoCore/create-readdir-stream",
   "author": "Charlike Mike Reagent <@tunnckoCore> (http://www.tunnckocore.tk)",
