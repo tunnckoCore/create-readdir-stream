@@ -49,7 +49,25 @@
     "index.js",
     "utils.js"
   ],
-  "keywords": [],
+  "keywords": [
+    "create",
+    "fast",
+    "fs",
+    "globs",
+    "io",
+    "mode",
+    "plugin",
+    "plugins",
+    "read",
+    "readdir",
+    "recurse",
+    "semantic",
+    "simple",
+    "small",
+    "standard",
+    "stream",
+    "streaming"
+  ],
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
