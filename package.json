@@ -80,17 +80,30 @@
     "tasks": [
       "readme"
     ],
-    "lint": {
-      "reflinks": true
-    },
     "related": {
-      "list": []
+      "list": [
+        "koa-better-router",
+        "vinyl",
+        "glob",
+        "is-match-ip",
+        "ip-filter",
+        "micromatch",
+        "nanomatch",
+        "bash-glob"
+      ]
     },
     "reflinks": [
       "micromatch",
       "through2",
       "use",
-      "vinyl"
-    ]
+      "vinyl",
+      "extend-shallow",
+      "ip-filter",
+      "koa",
+      "path-match"
+    ],
+    "lint": {
+      "reflinks": true
+    }
   }
 }

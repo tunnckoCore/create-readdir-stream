@@ -105,6 +105,16 @@ fs2.createReaddirStream('./')
   }))
 ```
 
+## Related
+- [bash-glob](https://www.npmjs.com/package/bash-glob): Bash-powered globbing for node.js | [homepage](https://github.com/jonschlinkert/bash-glob "Bash-powered globbing for node.js")
+- [glob](https://www.npmjs.com/package/glob): a little globber | [homepage](https://github.com/isaacs/node-glob#readme "a little globber")
+- [ip-filter](https://www.npmjs.com/package/ip-filter): Validates valid IPs (IPv4 and IPv6) using [micromatch][] - glob patterns, RegExp… [more](https://github.com/tunnckocore/ip-filter#readme) | [homepage](https://github.com/tunnckocore/ip-filter#readme "Validates valid IPs (IPv4 and IPv6) using [micromatch][] - glob patterns, RegExp, string or array of globs. If match returns the IP, otherwise null.")
+- [is-match-ip](https://www.npmjs.com/package/is-match-ip): Matching IPs using [micromatch][] and [ip-filter][] - glob patterns, RegExp, string or… [more](https://github.com/tunnckocore/is-match-ip#readme) | [homepage](https://github.com/tunnckocore/is-match-ip#readme "Matching IPs using [micromatch][] and [ip-filter][] - glob patterns, RegExp, string or array of globs. Returns matcher function.")
+- [koa-better-router](https://www.npmjs.com/package/koa-better-router): Fast, simple, smart and correct routing for [koa][], using [path-match][]. Foundation for… [more](https://github.com/tunnckocore/koa-better-router#readme) | [homepage](https://github.com/tunnckocore/koa-better-router#readme "Fast, simple, smart and correct routing for [koa][], using [path-match][]. Foundation for building powerful, flexible and RESTful APIs easily.")
+- [micromatch](https://www.npmjs.com/package/micromatch): Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch… [more](https://github.com/jonschlinkert/micromatch) | [homepage](https://github.com/jonschlinkert/micromatch "Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch.")
+- [nanomatch](https://www.npmjs.com/package/nanomatch): Fast, minimal glob matcher for node.js. Similar to micromatch, minimatch and multimatch… [more](https://github.com/jonschlinkert/nanomatch) | [homepage](https://github.com/jonschlinkert/nanomatch "Fast, minimal glob matcher for node.js. Similar to micromatch, minimatch and multimatch, but complete Bash 4.3 wildcard support only (no support for exglobs, posix brackets or braces)")
+- [vinyl](https://www.npmjs.com/package/vinyl): Virtual file format. | [homepage](https://github.com/gulpjs/vinyl#readme "Virtual file format.")
+
 ## Contributing
 Pull requests and stars are always welcome. For bugs and feature requests, [please create an issue](https://github.com/tunnckoCore/create-readdir-stream/issues/new).  
 But before doing anything, please read the [CONTRIBUTING.md](./CONTRIBUTING.md) guidelines.
@@ -113,7 +123,11 @@ But before doing anything, please read the [CONTRIBUTING.md](./CONTRIBUTING.md) 
 
 [![tunnckoCore.tk][author-www-img]][author-www-url] [![keybase tunnckoCore][keybase-img]][keybase-url] [![tunnckoCore npm][author-npm-img]][author-npm-url] [![tunnckoCore twitter][author-twitter-img]][author-twitter-url] [![tunnckoCore github][author-github-img]][author-github-url]
 
+[extend-shallow]: https://github.com/jonschlinkert/extend-shallow
+[ip-filter]: https://github.com/tunnckocore/ip-filter
+[koa]: https://github.com/koajs/koa
 [micromatch]: https://github.com/jonschlinkert/micromatch
+[path-match]: https://github.com/pillarjs/path-match
 [through2]: https://github.com/rvagg/through2
 [use]: https://github.com/jonschlinkert/use
 [vinyl]: https://github.com/gulpjs/vinyl
@@ -163,4 +177,3 @@ But before doing anything, please read the [CONTRIBUTING.md](./CONTRIBUTING.md) 
 [new-message-url]: https://github.com/tunnckoCore/ama
 [new-message-img]: https://img.shields.io/badge/ask%20me-anything-green.svg
 
-[extend-shallow]: https://github.com/jonschlinkert/extend-shallow
