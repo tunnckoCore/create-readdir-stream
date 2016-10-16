@@ -4,6 +4,16 @@
 
 [![code climate][codeclimate-img]][codeclimate-url] [![standard code style][standard-img]][standard-url] [![travis build status][travis-img]][travis-url] [![coverage status][coveralls-img]][coveralls-url] [![dependency status][david-img]][david-url]
 
+## Table of Contents
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+  * [CreateReaddirStream](#createreaddirstream)
+  * [.use](#use)
+  * [.createReaddirStream](#createreaddirstream)
+- [Related](#related)
+- [Contributing](#contributing)
+
 ## Install
 
 ```
@@ -16,6 +26,8 @@ npm i create-readdir-stream --save
 ```js
 const readdir = require('create-readdir-stream')
 ```
+
+## API
 
 ### [CreateReaddirStream](index.js#L32)
 > Initialize `CreateReaddirStream` with default `options`.
