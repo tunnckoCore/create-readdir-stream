@@ -71,7 +71,7 @@ test('should exposed instance create `.foobar` method from a plugin', function (
 test('should push all filepaths to stream', function (done) {
   var files = []
   var app = new Ctor()
-  app.createReaddirStream(__dirname)
+  app.createReaddirStream(new Buffer(__dirname))
     .on('data', function (file) {
       files.push(file.basename)
     })
