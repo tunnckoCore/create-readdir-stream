@@ -1,6 +1,6 @@
 {
   "name": "create-readdir-stream",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Streaming `fs.readdir`, extensible with smart plugins. No recursion and no globs by default - [use][] plugins. Does not stat and doesn't read the filepaths - use plugins. It just push [vinyl][] files to stream. Follows signature and semantics of `fs.createReadStream` method.",
   "repository": "tunnckoCore/create-readdir-stream",
   "author": "Charlike Mike Reagent <@tunnckoCore> (http://www.tunnckocore.tk)",
