@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "pinVersions": true,
+  "rebaseStalePrs": true,
+  "semanticCommits": true,
+  "labels": [
+    "renovate",
+    "deps"
+  ],
+  "assignees": [
+    "charlike"
+  ],
+  "automerge": "minor",
+  "automergeType": "branch-push",
+  "prCreation": "not-pending",
+  "schedule": [
+    "after 1am and before 6am on every weekday",
+    "every weekend"
+  ]
+}
